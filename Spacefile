@@ -1,0 +1,12 @@
+# Spacefile Docs: https://go.deta.dev/docs/spacefile/v0
+v: 0
+micros:
+  - name: stemisthacks2
+    src: .
+    engine: python3.9
+    primary: true
+    public_routes:
+      - "/upload" # exact match
+      - "/stock_history/*" # prefix match
+      - "/*"
+
