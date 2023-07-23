@@ -3,14 +3,12 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 
 
-
-
 db = firestore.client()
 
 
 def create_user(name, password):
     doc_ref = db.collection("users").document(name)
-    doc_ref.set({"name": name, "password": password})
+    doc_ref.set({"name": name, "password": password, "friends": []})
     return name + "Added to users"
 
 

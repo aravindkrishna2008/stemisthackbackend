@@ -44,8 +44,9 @@ def auth():
     password = data.get("password")
 
     try:
-       # Create a query to search for documents in the 'users' collection with the specified name
+        # Create a query to search for documents in the 'users' collection with the specified name
         query = db.collection("users").where("name", "==", name).limit(1)
+        print(query)
         a = False
 
         # Get the query results (should be at most one document)
@@ -57,9 +58,10 @@ def auth():
             a = True
             # return str(True)
         if a:
-           if verify_username_password(name, password):
-               return "verified user"
-           else:
+            if verify_username_password(name, password):
+                return "verified user"
+            
+            else:
                 return "wrong password"
         else:
             create_user(name, password)
@@ -67,6 +69,20 @@ def auth():
     except Exception as e:
         print(f"Error checking name in Firestore: {e}")
         return str(False)
+
+
+@app.route("/auth/add_friend", methods=["POST"])
+def add_friend():
+    data = request.json
+    name = data.get("name")
+    friend = data.get("friend")
+    doc_ref = db.collection("users").document(name)
+    doc = doc_ref.get()
+    if doc.exists:
+        doc_ref.update({"friends": firestore.ArrayUnion([friend])})
+        return "added friend"
+    else:
+        return "user doesn't exist"
 
 
 @app.route("/leaderboard/add", methods=["POST"])
@@ -88,7 +104,7 @@ def get_leaderboard():
     leaderboard = []
     for doc in docs:
         leaderboard.append(doc.to_dict())
-    return str(leaderboard)
+    return leaderboard
 
 
 if __name__ == "__main__":
